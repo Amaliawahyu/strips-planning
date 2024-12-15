@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STRIPS Algorithm - Move Blocks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .table {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            margin-top: 50px;
+            height: 400px;
+        }
+        .peg {
+            width: 100px;
+            height: 300px;
+            border: 2px solid #000;
+            margin: 0 20px;
+            position: relative;
+        }
+        .block {
+            width: 80px;
+            height: 40px;
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .block.A {
+            background-color: red;
+        }
+        .block.B {
+            background-color: blue;
+        }
+        .block.C {
+            background-color: green;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>STRIPS Algorithm: Move Blocks</h1>
+    <div class="table">
+        <div class="peg" id="peg1">
+            <div class="block A">A</div>
+            <div class="block B">B</div>
+            <div class="block C">C</div>
+        </div>
+        <div class="peg" id="peg2"></div>
+        <div class="peg" id="peg3"></div>
+    </div>
+    <button id="moveBlocks">Start Moving Blocks</button>
+
+    <script>
+        // STRIPS algorithm implementation
+        const pegs = {
+            peg1: document.getElementById('peg1'),
+            peg2: document.getElementById('peg2'),
+            peg3: document.getElementById('peg3')
+        };
+
+        const blocks = ['A', 'B', 'C']; // Block order
+
+        function moveBlock(block, fromPeg, toPeg) {
+            return new Promise(resolve => {
+                const blockEl = fromPeg.querySelector(`.block.${block}`);
+                if (blockEl) {
+                    // Remove from the current peg
+                    fromPeg.removeChild(blockEl);
+
+                    // Append to the target peg
+                    toPeg.appendChild(blockEl);
+
+                    // Adjust position
+                    setTimeout(() => {
+                        const children = toPeg.querySelectorAll('.block');
+                        children.forEach((child, index) => {
+                            child.style.bottom = `${index * 40}px`;
+                        });
+                        resolve();
+                    }, 500);
+                }
+            });
+        }
+
+        async function stripsAlgorithm() {
+            await moveBlock('C', pegs.peg1, pegs.peg3);
+            await moveBlock('B', pegs.peg1, pegs.peg2);
+            await moveBlock('C', pegs.peg3, pegs.peg2);
+            await moveBlock('A', pegs.peg1, pegs.peg3);
+            await moveBlock('C', pegs.peg2, pegs.peg1);
+            await moveBlock('B', pegs.peg2, pegs.peg3);
+            await moveBlock('C', pegs.peg1, pegs.peg3);
+        }
+
+        document.getElementById('moveBlocks').addEventListener('click', () => {
+            stripsAlgorithm();
+        });
+    </script>
+</body>
+</html>
